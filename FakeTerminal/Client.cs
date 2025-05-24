@@ -32,5 +32,5 @@ public class Client
         return "Command not found";
     }
 
-    internal DirectoryInfo CurrentDir;
+    public DirectoryInfo CurrentDir { internal set; get; }
 }
