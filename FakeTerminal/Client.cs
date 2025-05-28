@@ -1,5 +1,6 @@
 using FakeTerminal.Parsing;
 using FakeTerminal.Parsing.Impl;
+using System.Text;
 
 namespace FakeTerminal;
 
@@ -16,13 +17,14 @@ public class Client
 
     private Dictionary<string, ACommand> _commands;
 
-    public string ParseCommand(string rawCmd)
+    public string ParseCommand(string rawCmd, out Parameter[] parameters)
     {
         rawCmd = rawCmd.Trim();
         if (rawCmd == null) throw new NullReferenceException();
 
-        var words = rawCmd.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var words = rawCmd.Split(' ');
         var cmd = words[0].ToLowerInvariant();
+        parameters = new ParameterParser().Parse(rawCmd[cmd.Length..]);
 
         if (_commands.TryGetValue(cmd, out var value))
         {
