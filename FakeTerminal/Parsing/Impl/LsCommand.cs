@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace FakeTerminal.Parsing.Impl;
 
 public class LsCommand : ACommand
@@ -24,7 +26,27 @@ public class LsCommand : ACommand
     }
     public override bool DoAction(Client client, Parameter[] parameters, out string output)
     {
-        ValidateParameters(parameters);
+        var res = base.DoAction(client, parameters, out output);
+        if (!res) return false;
+
+        if (parameters.Any(x => x.RefParameter.LongName == "list"))
+        {
+            // Detailed view
+            StringBuilder str = new();
+            foreach (var d in Directory.GetDirectories(client.CurrentDir.FullName))
+            {
+                DirectoryInfo di = new(d);
+                str.AppendLine($"d---- {di.Name,50}");
+            }
+            foreach (var f in Directory.GetFiles(client.CurrentDir.FullName))
+            {
+                FileInfo fi = new(f);
+                str.AppendLine($"----- {fi.Name,50} {fi.Length,10}");
+            }
+
+            output = str.ToString();
+            return true;
+        }
 
         List<string> files = [];
 

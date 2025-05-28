@@ -8,10 +8,12 @@ public class Client
 {
     internal Client(DirectoryInfo currentDir)
     {
+        BaseDir = currentDir;
         CurrentDir = currentDir;
 
         _commands = new ACommand[] {
-            new LsCommand()
+            new LsCommand(),
+            new CdCommand()
         }.ToDictionary(x => x.Name, x => x);
     }
 
@@ -28,11 +30,12 @@ public class Client
 
         if (_commands.TryGetValue(cmd, out var value))
         {
-            var retValue = value.DoAction(this, out var output);
+            var retValue = value.DoAction(this, parameters, out var output);
             return output;
         }
         return "Command not found";
     }
 
     public DirectoryInfo CurrentDir { internal set; get; }
+    internal DirectoryInfo BaseDir { set; get; }
 }

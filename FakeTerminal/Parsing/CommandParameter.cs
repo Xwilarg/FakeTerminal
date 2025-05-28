@@ -1,9 +1,9 @@
 ﻿namespace FakeTerminal.Parsing;
 
-internal record CommandParameter
+public record CommandParameter
 {
-    internal char? ShortName { set; get; }
-    internal string LongName { set; get; }
-    internal string Description { set; get; }
-    internal bool Mandatory { set; get; }
+    public char? ShortName { set; get; }
+    public string? LongName { set; get; }
+    public string Description { set; get; }
+    public bool Mandatory { set; get; }
 }

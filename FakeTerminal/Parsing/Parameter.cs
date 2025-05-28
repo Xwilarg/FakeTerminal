@@ -7,7 +7,7 @@ public class Parameter
     public string Name { set; get; }
     public string Value { set; get; }
 
-    public string Description { set; get; }
+    public CommandParameter RefParameter { set; get; }
 }
 
 class ParameterEqualityComparer : IEqualityComparer<Parameter>
@@ -22,6 +22,7 @@ class ParameterEqualityComparer : IEqualityComparer<Parameter>
 
     public int GetHashCode([DisallowNull] Parameter obj)
     {
+        if (obj.Name is null) return 0;
         return obj.Name.GetHashCode();
     }
 }

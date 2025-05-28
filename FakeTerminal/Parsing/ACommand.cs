@@ -7,12 +7,21 @@ public abstract class ACommand
         Name = name;
     }
 
-    public abstract bool DoAction(Client client, Parameter[] parameters, out string output);
+    public virtual bool DoAction(Client client, Parameter[] parameters, out string output)
+    {
+        var outParameters = ValidateParameters(parameters);
+        if (outParameters == null)
+        {
+            output = "Some arguments failed validation";
+            return false;
+        }
+
+        output = string.Empty;
+        return true;
+    }
 
     internal protected Parameter[]? ValidateParameters(Parameter[] parameters)
     {
-        var validationsRequired = AllParameters.Count(x => x.Mandatory);
-
         // Remove dupplicates
         parameters = parameters.Distinct(new ParameterEqualityComparer()).ToArray();
 
@@ -24,11 +33,11 @@ public abstract class ACommand
             );
             if (cParam == null) return null;
 
-            p.Description = cParam.Description;
-            if (cParam.Mandatory) validationsRequired--;
+            p.RefParameter = cParam;
         }
 
-        if (validationsRequired > 0) return null; // One of the mandatory parameter wasn't given!
+        if (parameters.Count(x => x.RefParameter.Mandatory) != AllParameters.Count(x => x.Mandatory))
+            return null; // One of the mandatory parameter wasn't given!
 
         return parameters;
     }
