@@ -37,7 +37,7 @@ public class HelpCommand : ACommand
             return false;
         }
 
-        output = string.Join("\n", client.Commands.Select(x => $"{x.Value.Name}: {x.Value.Description}"));
+        output = string.Join("\n", client.Commands.OrderBy(x => x.Key).Select(x => $"{x.Value.Name}: {x.Value.Description}"));
         return true;
     }
 }
