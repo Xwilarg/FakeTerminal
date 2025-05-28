@@ -5,14 +5,14 @@ public class CdCommand : ACommand
     public CdCommand() : base("cd")
     { }
 
-    public override string Description => "Show the content of a file";
+    public override string Description => "Change the current working directory to the given folder";
 
     internal override CommandParameter[] AllParameters => [
         new()
         {
             ShortName = null,
             LongName = null,
-            Description = "File to go to",
+            Description = "Directory to go to",
             Mandatory = false
         }
     ];
@@ -31,7 +31,7 @@ public class CdCommand : ACommand
 
         var newFolder = Path.Combine(client.CurrentDir.FullName, path.Value);
 
-        if (Directory.Exists(newFolder) && Path.GetFullPath(newFolder).StartsWith(client.BaseDir.FullName)) // Is path valid and in our current workspace?
+        if (Directory.Exists(newFolder) && client.IsPathValid(newFolder)) // Is path valid and in our current workspace?
         {
             client.CurrentDir = new DirectoryInfo(newFolder);
             return true;

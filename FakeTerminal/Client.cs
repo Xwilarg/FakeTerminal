@@ -1,6 +1,5 @@
 using FakeTerminal.Parsing;
 using FakeTerminal.Parsing.Impl;
-using System.Text;
 
 namespace FakeTerminal;
 
@@ -13,7 +12,8 @@ public class Client
 
         _commands = new ACommand[] {
             new LsCommand(),
-            new CdCommand()
+            new CdCommand(),
+            new CatCommand()
         }.ToDictionary(x => x.Name, x => x);
     }
 
@@ -36,6 +36,9 @@ public class Client
         return "Command not found";
     }
 
+    internal bool IsPathValid(string path)
+        => Path.GetFullPath(path).StartsWith(BaseDir.FullName);
+
     public DirectoryInfo CurrentDir { internal set; get; }
-    internal DirectoryInfo BaseDir { set; get; }
+    internal DirectoryInfo BaseDir { private set; get; }
 }

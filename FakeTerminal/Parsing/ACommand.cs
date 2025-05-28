@@ -9,10 +9,10 @@ public abstract class ACommand
 
     public virtual bool DoAction(Client client, Parameter[] parameters, out string output)
     {
-        var outParameters = ValidateParameters(parameters);
+        var outParameters = ValidateParameters(parameters, out var parsingError);
         if (outParameters == null)
         {
-            output = "Some arguments failed validation";
+            output = $"Some arguments failed validation: {parsingError}";
             return false;
         }
 
@@ -20,7 +20,7 @@ public abstract class ACommand
         return true;
     }
 
-    internal protected Parameter[]? ValidateParameters(Parameter[] parameters)
+    private Parameter[]? ValidateParameters(Parameter[] parameters, out ParsingError parsingError)
     {
         // Remove dupplicates
         parameters = parameters.Distinct(new ParameterEqualityComparer()).ToArray();
@@ -31,14 +31,23 @@ public abstract class ACommand
                 (x.ShortName.HasValue && x.ShortName.Value.ToString() == p.Name) ||
                 x.LongName == p.Name
             );
-            if (cParam == null) return null;
+            if (cParam == null)
+            {
+                parsingError = ParsingError.UnknownParameter;
+                return null;
+            }
 
             p.RefParameter = cParam;
         }
 
         if (parameters.Count(x => x.RefParameter.Mandatory) != AllParameters.Count(x => x.Mandatory))
-            return null; // One of the mandatory parameter wasn't given!
+        {
+            // One of the mandatory parameter wasn't given!
+            parsingError = ParsingError.MissingMandatoryParameter;
+            return null;
+        }
 
+        parsingError = ParsingError.None;
         return parameters;
     }
 
@@ -47,4 +56,11 @@ public abstract class ACommand
     public string Name { private set; get; }
 
     internal abstract CommandParameter[] AllParameters { get; }
+
+    private enum ParsingError
+    {
+        None,
+        MissingMandatoryParameter,
+        UnknownParameter
+    }
 }
