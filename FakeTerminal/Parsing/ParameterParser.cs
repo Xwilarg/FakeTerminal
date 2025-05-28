@@ -17,6 +17,7 @@ internal class ParameterParser
             if (_currParam.Name != null)
             {
                 _allParams.Add(_currParam);
+                _currParam = new();
             }
             if (word.StartsWith("--")) // Example: --format abc
             {
@@ -40,6 +41,7 @@ internal class ParameterParser
             if (_currParam.Value != null)
             {
                 _allParams.Add(_currParam);
+                _currParam = new();
             }
             _currParam.Value = word;
         }
@@ -48,6 +50,7 @@ internal class ParameterParser
     internal Parameter[] Parse(string parameters)
     {
         bool escapeNext = false;
+        bool isQuoted = false;
         foreach (var p in parameters)
         {
             if (_currWord.Length == 0 && char.IsWhiteSpace(p))
@@ -59,7 +62,18 @@ internal class ParameterParser
                 escapeNext = true; // Escape sequence detected
                 continue;
             }
-            else if (!escapeNext && p == ' ')
+            else if (!escapeNext && p == '"')
+            {
+                if (isQuoted)
+                {
+                    AddFlag();
+
+                    _currWord = new();
+                    isQuoted = false;
+                }
+                else isQuoted = true;
+            }
+            else if (!escapeNext && !isQuoted && p == ' ')
             {
                 AddFlag();
 

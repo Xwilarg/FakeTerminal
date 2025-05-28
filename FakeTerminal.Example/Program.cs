@@ -16,4 +16,5 @@ void ShowCommand(string data)
 ShowCommand("ls -la");
 ShowCommand("ls --target test");
 ShowCommand("ls --target some\\ folder");
+ShowCommand("ls --target \"some folder\"");
 ShowCommand("ls --target folder other");
