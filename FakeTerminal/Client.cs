@@ -10,14 +10,15 @@ public class Client
         BaseDir = currentDir;
         CurrentDir = currentDir;
 
-        _commands = new ACommand[] {
+        Commands = new ACommand[] {
             new LsCommand(),
             new CdCommand(),
-            new CatCommand()
+            new CatCommand(),
+            new HelpCommand()
         }.ToDictionary(x => x.Name, x => x);
     }
 
-    private Dictionary<string, ACommand> _commands;
+    internal Dictionary<string, ACommand> Commands { private set; get; }
 
     public string ParseCommand(string rawCmd, out Parameter[] parameters)
     {
@@ -28,7 +29,7 @@ public class Client
         var cmd = words[0].ToLowerInvariant();
         parameters = new ParameterParser().Parse(rawCmd[cmd.Length..]);
 
-        if (_commands.TryGetValue(cmd, out var value))
+        if (Commands.TryGetValue(cmd, out var value))
         {
             var retValue = value.DoAction(this, parameters, out var output);
             return output;

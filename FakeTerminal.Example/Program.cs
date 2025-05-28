@@ -27,6 +27,9 @@ ShowCommand("cd");
 
 ShowCommand("cat FakeTerminal.Example.runtimeconfig.json");
 
+ShowCommand("help");
+ShowCommand("help cd");
+
 /*ShowCommand("ls -la");
 ShowCommand("ls --target test");
 ShowCommand("ls --target some\\ folder");
