@@ -53,7 +53,7 @@ public class LsCommand : ACommand
         foreach (var d in Directory.GetDirectories(client.CurrentDir.FullName))
         {
             DirectoryInfo di = new(d);
-            files.Add(FormatFileName(di.Name));
+            files.Add(FormatFileName(di.Name) + "/");
         }
         foreach (var f in Directory.GetFiles(client.CurrentDir.FullName))
         {
